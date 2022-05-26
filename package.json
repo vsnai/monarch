@@ -1,7 +1,7 @@
 {
   "name": "demo",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "dist/my-element.es.js",
   "exports": {
     ".": "./dist/my-element.es.js"
@@ -11,12 +11,25 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "lit": "^2.0.2"
+    "date-fns": "latest",
+    "lit": "latest"
   },
   "devDependencies": {
-    "vite": "^2.9.5"
+    "@vitest/ui": "latest",
+    "c8": "latest",
+    "cross-fetch": "latest",
+    "happy-dom": "latest",
+    "msw": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
