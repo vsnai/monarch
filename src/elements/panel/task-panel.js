@@ -31,7 +31,7 @@ export class TaskPanel extends LitElement {
     this.caseSubType = {}
   }
   
-  _handleCaseSubTypeChange(event) {    
+  _handleCaseSubTypeChange(event) {
     this.caseSubType = event.detail.caseSubType
   }
 

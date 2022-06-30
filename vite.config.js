@@ -4,12 +4,13 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   build: {
     lib: {
-      entry: 'src/elements/monarch-app.js',
+      // entry: 'src/elements/monarch-app.js',
+      entry: 'index.html',
       formats: ['es']
     },
-    rollupOptions: {
-      external: /^lit/
-    }
+    // rollupOptions: {
+    //   external: /^lit/
+    // }
   },
   test: {
     globals: true,

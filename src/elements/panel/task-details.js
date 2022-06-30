@@ -1,6 +1,7 @@
 import { html, css, LitElement } from 'lit'
+import { format, parseISO } from 'date-fns'
 
-import { getNextTask, completeTask } from '../../services/task.service'
+import { getNextTask, completeTask, pendTask } from '../../services/task.service'
 import { getEligibilityVerificationTier } from '../../services/vaas.service'
 
 export class TaskDetails extends LitElement {
@@ -24,7 +25,7 @@ export class TaskDetails extends LitElement {
   }
 
   static properties = {
-    loadingState: { type: String },
+    isLoading: { type: String },
     caseSubType: { type: Object },
     task: { type: Object },
   }
@@ -32,52 +33,75 @@ export class TaskDetails extends LitElement {
   constructor() {
     super()
 
-    this.loadingState = 'default'
+    this.isLoading = 'default'
     this.caseSubType = {}
     this.task = {}
   }
 
   async willUpdate(props) {
     if (props.has('caseSubType')) {
-      this.loadingState = 'default'
+      this.isLoading = 'default'
 
       await this._getNextTask()
 
-      this.loadingState = null
+      this.isLoading = null
     }
   }
 
   async _completeTask() {
-    this.loadingState = 'completed'
+    this.isLoading = 'completed'
 
     await completeTask()
 
     await this._getNextTask()
 
-    this.loadingState = null
+    this.isLoading = null
+  }
+
+  async _pendTask() {
+    this.isLoading = 'pended'
+
+    await pendTask()
+
+    await this._getNextTask()
+
+    this.isLoading = null
   }
 
   async _getNextTask() {
-    this.task = {}
-
     const task = await getNextTask(this.caseSubType.raw)
 
+    if (Object.keys(task).length === 0) {
+      this.task = {}
+
+      return
+    }
+
+    // use task instead of this.task !
+
     await getEligibilityVerificationTier()
+
+    // await new Promise(r => setTimeout(r, 1000))
 
     this.task = task
   }
 
   render() {
-    if (this.loadingState === 'default') {
+    if (this.isLoading === 'default') {
       return html`<div>Loading ...</div>`
-    } else if (this.loadingState === 'completed') {
+    } else if (this.isLoading === 'completed') {
       return html`<div>Loading ... (Task Completed)</div>`
-    } else if (this.loadingState === null) {
+    } else if (this.isLoading === 'pended') {
+      return html`<div>Loading ... (Pended Until ${format(parseISO(this.task.date), 'MM/dd/yyyy')})</div>`
+    } else if (this.isLoading === null && Object.keys(this.task).length === 0) {
+      return html`<div>No task found.</div>`
+    } else if (this.isLoading === null) {
       return html`
         <main>
           <div>${this.task.title}</div>
           <div>${this.task.description}</div>
           <button @click=${this._completeTask}>Complete Task</button>
+          <button @click=${this._pendTask}>Pend Task</button>
         </main>
       `
     }

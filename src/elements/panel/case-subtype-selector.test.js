@@ -1,19 +1,18 @@
-import { rest } from 'msw'
-import { server } from '../../mocks/server'
-import { caseSubtypes } from '../../mocks/handlers'
+import { server, rest, caseSubtypes } from '../../../setupTests'
 
 import './case-subtype-selector'
 
-describe('case-subtype-selector', async () => {
+describe('case-subtype-selector', () => {
+  let el
+
   beforeEach(() => {
     document.body.innerHTML = '<case-subtype-selector></case-subtype-selector>'
+
+    el = document.body.querySelector('case-subtype-selector')
   })
 
   it('connectedCallback: 200', async () => {
-    const el = document.body.querySelector('case-subtype-selector')
-
     await el.connectedCallback()
-    await el.updateComplete
 
     expect(el.options).toEqual(caseSubtypes)
   })
@@ -23,17 +22,12 @@ describe('case-subtype-selector', async () => {
       return res(ctx.status(404))
     }))
 
-    const el = document.body.querySelector('case-subtype-selector')
-
     await el.connectedCallback()
-    await el.updateComplete
 
     expect(el.options).toEqual([])
   })
 
-  it('_handleChange', async () => {
-    const el = document.body.querySelector('case-subtype-selector')
-
+  it('_handleChange', () => {
     el.options = caseSubtypes
     el._handleChange({
       target: {
@@ -44,9 +38,7 @@ describe('case-subtype-selector', async () => {
     expect(el.selectedCaseSubType).toEqual(caseSubtypes[1])
   })
 
-  it('_handleSubmit', async () => {
-    const el = document.body.querySelector('case-subtype-selector')
-
+  it('_handleSubmit', () => {
     const spy = vi.spyOn(el, 'dispatchEvent')
 
     el.selectedCaseSubType = caseSubtypes[0]

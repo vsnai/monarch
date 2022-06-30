@@ -2,8 +2,6 @@ import { html, css, LitElement } from 'lit'
 
 import './panel/task-panel'
 
-import '../mocks'
-
 export class MonarchApp extends LitElement {
   static get styles() {
     return [css`
